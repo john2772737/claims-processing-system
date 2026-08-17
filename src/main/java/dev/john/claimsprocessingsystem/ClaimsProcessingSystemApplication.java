@@ -10,4 +10,5 @@ public class ClaimsProcessingSystemApplication {
         SpringApplication.run(ClaimsProcessingSystemApplication.class, args);
     }
 
+
 }
