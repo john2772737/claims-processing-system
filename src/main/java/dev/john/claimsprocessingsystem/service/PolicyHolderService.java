@@ -5,6 +5,8 @@ import dev.john.claimsprocessingsystem.repository.PolicyHolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PolicyHolderService {
     @Autowired
@@ -44,6 +46,15 @@ public class PolicyHolderService {
         }
 
         return repository.save(holderId);
+    }
+
+    public PolicyHolder.PolicyHolderSummary getSummaryById(Long id) {
+        return repository.findSummaryById(id)
+                .orElseThrow(() -> new RuntimeException("Policy holder not found with ID: " + id));
+    }
+
+    public List<PolicyHolder> allPolicyHolder(){
+        return repository.findAll();
     }
 
 }

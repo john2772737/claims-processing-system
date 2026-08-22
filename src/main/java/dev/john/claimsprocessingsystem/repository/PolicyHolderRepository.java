@@ -11,5 +11,6 @@ public interface PolicyHolderRepository extends JpaRepository<PolicyHolder, Long
 
     // Custom query method generated automatically by Spring Data JPA
     Optional<PolicyHolder> findByEmail(String email);
+    Optional<PolicyHolder.PolicyHolderSummary> findSummaryById(Long id);
 
 }
