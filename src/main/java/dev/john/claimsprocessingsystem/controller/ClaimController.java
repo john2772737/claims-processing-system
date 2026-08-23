@@ -38,5 +38,11 @@ public class ClaimController {
         return ResponseEntity.ok(updatedClaim);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteClaim(@PathVariable long id){
+        service.deleteClaim(id);
+
+        return ResponseEntity.noContent().build();
+    }
 
 }

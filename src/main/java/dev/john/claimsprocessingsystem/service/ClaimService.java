@@ -15,17 +15,17 @@ public class ClaimService {
     @Autowired
     private ClaimRepository repository;
 
-    private String generateClaimNumber(){
+    private String generateClaimNumber() {
         int randomNumber = ThreadLocalRandom.current().nextInt(10000);
         return String.format("CLM-%04d", randomNumber);
     }
 
 
-    public Claim createClaim(Claim claim){
+    public Claim createClaim(Claim claim) {
         String generatedClaimNumber;
         do {
-           generatedClaimNumber= generateClaimNumber();
-        }while (repository.findByClaimNumber(generateClaimNumber()).isPresent());
+            generatedClaimNumber = generateClaimNumber();
+        } while (repository.findByClaimNumber(generateClaimNumber()).isPresent());
 
         claim.setClaimNumber(generatedClaimNumber);
         return repository.save(claim);
@@ -41,12 +41,12 @@ public class ClaimService {
         return claims;
     }
 
-    public Claim.ClaimSummary getClaimByClaimNumber (String claimNumber){
+    public Claim.ClaimSummary getClaimByClaimNumber(String claimNumber) {
         return repository.findSummaryByClaimNumber(claimNumber)
                 .orElseThrow(() -> new RuntimeException("Policy not found with number: " + claimNumber));
     }
 
-    public Claim updateClaim(String claimNumber,Claim updatedData){
+    public Claim updateClaim(String claimNumber, Claim updatedData) {
         Claim existingClaim = repository.findByClaimNumber(claimNumber)
                 .orElseThrow(() -> new RuntimeException("Policy not found with number: " + claimNumber));
 
@@ -73,6 +73,12 @@ public class ClaimService {
         return repository.save(existingClaim);
     }
 
+    public void deleteClaim(Long id) {
+        Claim existingClaim = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Claim not found with ID: " + id));
 
+        repository.delete(existingClaim);
+
+    }
 
 }
