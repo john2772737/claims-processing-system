@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface ClaimRepository extends JpaRepository <Claim, Long> {
     Optional<Claim> findByClaimNumber(String claimNumber);
     Optional<Claim.ClaimSummary> findSummaryByClaimNumber(String claimNumber);
+
+    boolean existsById(Long id);
+    boolean existsByClaimNumber(String generatedClaimNumber);
 }

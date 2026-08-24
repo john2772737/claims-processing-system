@@ -1,8 +1,8 @@
 package dev.john.claimsprocessingsystem.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
+
 
 import java.time.LocalDateTime;
 
@@ -15,25 +15,31 @@ public class PolicyHolder {
     private Long id;
 
     @NotBlank(message = "First name is required")
-    @Column(name = "first_name")
+    @Size(max = 50, message = "First name cannot exceed 50 characters")
+    @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
     @NotBlank(message = "Last name is required")
-    @Column(name = "last_name")
+    @Size(max = 50, message = "Last name cannot exceed 50 characters")
+    @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Email
     @NotBlank(message = "Email is required")
+    @Email(message = "Email must be a valid email address")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be a valid format (10 to 15 digits)")
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @PastOrPresent(message = "Created date cannot be in the future")
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
     // 1. Default empty constructor (Required by JPA/Hibernate)
     public PolicyHolder() {}
 

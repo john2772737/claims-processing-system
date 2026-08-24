@@ -3,6 +3,7 @@ package dev.john.claimsprocessingsystem.controller;
 
 import dev.john.claimsprocessingsystem.entity.PolicyHolder;
 import dev.john.claimsprocessingsystem.service.PolicyHolderService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class PolicyHolderController {
     private PolicyHolderService service;
 
     @PostMapping
-    public ResponseEntity<PolicyHolder> registerPolicyHolder(@RequestBody PolicyHolder holder) {
+    public ResponseEntity<PolicyHolder> registerPolicyHolder(@Valid @RequestBody PolicyHolder holder) {
         PolicyHolder createdHolder = service.registerPolicyHolder(holder);
         return new ResponseEntity<>(createdHolder, HttpStatus.CREATED); // Returns 201 Created
     }
@@ -33,7 +34,7 @@ public class PolicyHolderController {
     }
 
     @PatchMapping("/{id}")
-    public  ResponseEntity<PolicyHolder> editPolicyHolder(@PathVariable Long id, @RequestBody PolicyHolder updatedData){
+    public  ResponseEntity<PolicyHolder> editPolicyHolder(@Valid @PathVariable Long id, @RequestBody PolicyHolder updatedData){
         PolicyHolder editHolder = service.editPolicyHolder(id,updatedData );
         return ResponseEntity.ok(editHolder);
     }

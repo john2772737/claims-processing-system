@@ -1,6 +1,8 @@
 package dev.john.claimsprocessingsystem.service;
 
 import dev.john.claimsprocessingsystem.entity.PolicyHolder;
+import dev.john.claimsprocessingsystem.exception.DuplicateResourceException;
+import dev.john.claimsprocessingsystem.exception.ResourceNotFoundException;
 import dev.john.claimsprocessingsystem.repository.PolicyHolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,14 +16,14 @@ public class PolicyHolderService {
 
     public PolicyHolder registerPolicyHolder(PolicyHolder holder) {
         if (repository.findByEmail(holder.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered: " + holder.getEmail());
+            throw new DuplicateResourceException("Email already registered: " + holder.getEmail());
         }
         return repository.save(holder);
     }
 
     public void deletePolicyHolder(Long id) {
         PolicyHolder existingHolder = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Policy holder not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Policy holder not found with ID: " + id));
 
         repository.delete(existingHolder);
     }
@@ -29,7 +31,7 @@ public class PolicyHolderService {
     public PolicyHolder editPolicyHolder(Long id, PolicyHolder updatedData) {
 
         PolicyHolder holderId = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Policy holder not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Policy holder not found with ID: " + id));
 
         // Only update fields if new values are provided
         if (updatedData.getFirstName() != null) {
@@ -50,11 +52,15 @@ public class PolicyHolderService {
 
     public PolicyHolder.PolicyHolderSummary getSummaryById(Long id) {
         return repository.findSummaryById(id)
-                .orElseThrow(() -> new RuntimeException("Policy holder not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Policy holder not found with ID: " + id));
     }
 
     public List<PolicyHolder> allPolicyHolder(){
-        return repository.findAll();
+        List<PolicyHolder> list= repository.findAll();
+        if (list.isEmpty()) {
+            throw new ResourceNotFoundException("No policy holders found in the database.");
+        }
+        return list;
     }
 
 }
