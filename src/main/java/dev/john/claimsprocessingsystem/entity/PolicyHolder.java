@@ -7,7 +7,7 @@ import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "policy_holders")
+@Table(name = "policy_holder")
 public class PolicyHolder {
 
     @Id

@@ -29,17 +29,23 @@ public class DocumentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID: " + id));
     }
 
-  //  public List<Document> getDocumentsByClaimId(Long claimId) {
-       // if (!claimRepository.existsById(claimId)) {
-         //   throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
-        //}
-        //return repository.findById(claimId);
-    //}
+    public List<Document> getDocumentsByClaimId(Long claimId) {
+        if (!claimRepository.existsById(claimId)) {
+            throw new ResourceNotFoundException("Claim not found with ID: " + claimId);
+        }
+        // FIXED: Uses the custom repository method to query by claim ID
+        return repository.findByClaimId(claimId);
+    }
 
     public Document createDocument(Document document) {
-        // Validate that the associated claim exists
-        if (!claimRepository.existsById(document.getClaimId().getId())) {
-            throw new ResourceNotFoundException("Cannot create document. Claim not found with ID: " + document.getClaimId());
+        // Validate that an associated Claim object is provided
+        if (document.getClaimId() == null || document.getClaimId().getId() == null) {
+            throw new IllegalArgumentException("Document must be associated with a valid Claim ID.");
+        }
+
+        Long claimId = document.getClaimId().getId();
+        if (!claimRepository.existsById(claimId)) {
+            throw new ResourceNotFoundException("Cannot create document. Claim not found with ID: " + claimId);
         }
 
         if (document.getUploadedAt() == null) {
@@ -52,10 +58,11 @@ public class DocumentService {
         Document existing = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Document not found with ID: " + id));
 
-        // Validate claim existence if claimId is being updated
+        // Validate claim existence if claim association is being updated
         if (updatedData.getClaimId() != null && !updatedData.getClaimId().equals(existing.getClaimId())) {
-            if (!claimRepository.existsByClaimNumber(updatedData.getClaimId().getClaimNumber())) {
-                throw new ResourceNotFoundException("Cannot update document. Claim not found with ID: " + updatedData.getClaimId());
+            Long newClaimId = updatedData.getClaimId().getId();
+            if (newClaimId == null || !claimRepository.existsById(newClaimId)) {
+                throw new ResourceNotFoundException("Cannot update document. Claim not found with ID: " + newClaimId);
             }
             existing.setClaimId(updatedData.getClaimId());
         }
